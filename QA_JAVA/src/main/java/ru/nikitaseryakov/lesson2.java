@@ -1,3 +1,5 @@
+package ru.nikitaseryakov;
+
 import java.util.Arrays;
 
 public class lesson2 {
