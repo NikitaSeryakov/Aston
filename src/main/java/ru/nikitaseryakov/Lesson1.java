@@ -1,4 +1,4 @@
-package ru.nikitaseryakov
+package ru.nikitaseryakov;
 
 public class Lesson1 {
     static void main(String[] args) {
