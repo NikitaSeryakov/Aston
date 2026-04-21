@@ -6,7 +6,7 @@ public class Product {
     private double price;
     private boolean isReserved;
 
-    private Product(String name, String data, String manufacturer, String country, double price, boolean isReserved) {
+    Product(String name, String data, String manufacturer, String country, double price, boolean isReserved) {
         this.name = name;
         this.data = data;
         this.manufacturer = manufacturer;
