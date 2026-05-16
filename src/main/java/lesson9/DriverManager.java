@@ -18,7 +18,7 @@ public class DriverManager {
             options.addArguments("--start-maximized");
 
             driver = new ChromeDriver(options);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         }
         return driver;
