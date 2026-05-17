@@ -1,13 +1,10 @@
 import lesson9.DriverManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-
 import java.util.List;
-
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -15,12 +12,11 @@ public class TestMTS {
     protected WebDriver driver;
 
     @Test
-    public void openMTS() {
+    public void openMts() {
         driver = DriverManager.getDriver();
         driver.get("https://www.mts.by/");
         WebElement acceptCookie = driver.findElement(By.xpath("//*[text() = 'Принять']"));
         acceptCookie.click();
-
     }
 
     @Test
@@ -37,23 +33,25 @@ public class TestMTS {
     }
 
     @Test
-    void testNumberSimple() {
+    void testNumber() {
+        final By TELEFON_NUMBER = By.xpath("//input[@placeholder = 'Номер телефона']");
+        final By SUM = By.xpath("//input[@placeholder = 'Сумма']");
+        final By CONTINUE = By.xpath("//*[button = 'Продолжить']");
 
-        WebElement phoneField = driver.findElement(By.id("connection-phone"));
-        WebElement sumField = driver.findElement(By.id("connection-sum"));
-
-// Вводим текст напрямую через выполнение JavaScript кода
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].value='297777777';", phoneField);
-        js.executeScript("arguments[0].value='10';", sumField);
-
-// Кликаем по кнопке
-        WebElement button = driver.findElement(By.cssSelector("form button[type='submit']"));
-        js.executeScript("arguments[0].click();", button);
+        driver.findElement(TELEFON_NUMBER).sendKeys("297777777");
+        driver.findElement(SUM).sendKeys("200");
+        driver.findElement(CONTINUE).click();
     }
+
     @Test
     void testFirst() {
         WebElement title = driver.findElement(By.xpath("//*[contains(text() , 'Онлайн пополнение')]"));
         assertEquals("Онлайн пополнение\nбез комиссии", title.getText());
+    }
+    @AfterClass
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
