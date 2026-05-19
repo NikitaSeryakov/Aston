@@ -14,7 +14,7 @@ public class UITest {
 
     @Before
     public void setUp() {
-        driver = DriverManager.getDriver();  // Получаем экземпляр драйвера из DriverManager
+        driver = DriverManager.getDriver();
         driver.get("https://mts.by");
         mainPage = new MainPage(driver);
         WebElement acceptCookie = driver.findElement(By.xpath("//*[text() = 'Принять']"));
