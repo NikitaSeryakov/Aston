@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +14,7 @@ public class UITest {
     private MainPage mainPage;
 
     @Before
+    @Step("Open page and accept cookie")
     public void setUp() {
         driver = DriverManager.getDriver();
         driver.get("https://mts.by");
@@ -22,16 +24,19 @@ public class UITest {
     }
 
     @Test
+    @Step("Text")
     public void testBlockTitle() {
         Assert.assertTrue("Блок 'Онлайн пополнение без комиссии' не найден", mainPage.isBlockTitleDisplayed());
     }
 
     @Test
+    @Step("logo")
     public void testPaymentLogos() {
         Assert.assertFalse("Логотипы платежных систем не найдены", mainPage.arePaymentLogosDisplayed());
     }
 
     @Test
+    @Step("Services")
     public void testServiceLink() {
         mainPage.clickServiceLink();
         Assert.assertFalse("Не удалось перейти на страницу 'Подробнее о сервисе'", driver.getTitle().contains("Подробнее о сервисе"));
@@ -39,6 +44,7 @@ public class UITest {
     }
 
     @Test
+    @Step("Click continue button and check elements")
     public void testContinueButton() {
         String connectionErrorMessage = "Сумма"; //
         Assert.assertEquals("Неверное сообщение в поле для услуг связи", connectionErrorMessage, mainPage.getPlaceholderText("//input[@id='connection-sum']"));
