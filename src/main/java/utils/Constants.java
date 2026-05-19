@@ -1,5 +1,5 @@
 package utils;
 
 public class Constants {
-    public static final String MAIN_PAGE_URL = "http://mts.by/";
+    public static final String MAIN_PAGE_URL = "https://www.mts.by/";
 }

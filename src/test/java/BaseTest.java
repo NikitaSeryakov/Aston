@@ -5,12 +5,14 @@ import utils.DriverManager;
 
 public class BaseTest {
     protected MainPageService mainPageService;
+
     @BeforeMethod
-    public void startTest(){
+    public void startTests() {
         mainPageService = new MainPageService();
     }
+
     @AfterMethod
-    public void stopBrowser(){
-        //DriverManager.getDriver();
+    public void stopBrowser() {
+        DriverManager.getDriver();
     }
 }

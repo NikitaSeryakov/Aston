@@ -1,4 +1,5 @@
 package utils;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -7,7 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.time.Duration;
 
 public class DriverManager {
-    private static WebDriver driver;
+    public static WebDriver driver;
 
     public static WebDriver getDriver() {
         if (driver == null) {
@@ -23,7 +24,7 @@ public class DriverManager {
         return driver;
     }
 
-    public static void quitDriver(){
+    public static void quitDriver() {
 
         if (driver != null) {
             driver.quit();
