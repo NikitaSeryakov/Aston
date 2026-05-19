@@ -1,45 +1,64 @@
-import jdk.jfr.Description;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import utils.DriverManager;
+import page.MainPage;
 
-import java.util.List;
+public class UITest {
+    private WebDriver driver;
+    private MainPage mainPage;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static utils.DriverManager.driver;
+    @Before
+    public void setUp() {
+        driver = DriverManager.getDriver();  // Получаем экземпляр драйвера из DriverManager
+        driver.get("https://mts.by");
+        mainPage = new MainPage(driver);
+        WebElement acceptCookie = driver.findElement(By.xpath("//*[text() = 'Принять']"));
+        acceptCookie.click();
+    }
 
-public class UITest extends BaseTest {
     @Test
-    void testLogo() {
-        mainPageService.openPageAndAcceptCookie();
-        // Находим все логотипы по указанным селекторам
-        List<WebElement> logos = driver.findElements(By.cssSelector(".pay-partners img, .payment-systems img"));
-
-        // Проверяем, что список элементов не пуст
-        assertFalse(logos.isEmpty(), "Логотипы платежных систем не найдены на странице!");
-
-        // Проверяем, что каждый найденный логотип действительно виден пользователю
-        for (WebElement logo : logos) {
-            assertTrue(logo.isDisplayed(), "Один из логотипов скрыт!");
-        }
+    public void testBlockTitle() {
+        Assert.assertTrue("Блок 'Онлайн пополнение без комиссии' не найден", mainPage.isBlockTitleDisplayed());
     }
 
-    @DataProvider(name = "correct values")
-    public Object[][] getCorrectValues() {
-        return new Object[][]{
-                {"297777777", "200"}
-        };
+    @Test
+    public void testPaymentLogos() {
+        Assert.assertFalse("Логотипы платежных систем не найдены", mainPage.arePaymentLogosDisplayed());
     }
 
-    @Test(testName = "Test correct values", dataProvider = "correct values")
-    @Description("Verify telethon number ")
-    public void mayToPay(String telethon, String sum) {
-        mainPageService.openPageAndAcceptCookie()
-                .inputCorrectValues(telethon, sum);
+    @Test
+    public void testServiceLink() {
+        mainPage.clickServiceLink();
+        Assert.assertFalse("Не удалось перейти на страницу 'Подробнее о сервисе'", driver.getTitle().contains("Подробнее о сервисе"));
+        mainPage.goBack();
+    }
 
+    @Test
+    public void testContinueButton() {
+        String connectionErrorMessage = "Сумма"; //
+        Assert.assertEquals("Неверное сообщение в поле для услуг связи", connectionErrorMessage, mainPage.getPlaceholderText("//input[@id='connection-sum']"));
+        Assert.assertEquals("Неверное сообщение в поле для номера телефона", connectionErrorMessage, mainPage.getPlaceholderText("//input[@id='connection-phone']"));
+
+        String phoneNumber = "297777777";
+        String expectedAmount = "200.00";
+        mainPage.fillFormAndContinue("Услуги связи", phoneNumber);
+
+        Assert.assertFalse("Сумма или номер телефона отображаются неверно",
+                mainPage.verifyAmountsAndPhoneNumber(expectedAmount, phoneNumber));
+
+        Assert.assertEquals(connectionErrorMessage, mainPage.getPlaceholderText("//label[contains(text(), 'Номер карты')]"));
+        Assert.assertEquals(connectionErrorMessage, mainPage.getPlaceholderText("//label[text()='Срок действия']"));
+        Assert.assertEquals(connectionErrorMessage, mainPage.getPlaceholderText("//label[text()='CVC']"));
+        Assert.assertFalse("Иконки платёжных систем не найдены", mainPage.isPaymentIconsDisplayed());
+    }
+
+    @After
+    public void tearDown() {
+        DriverManager.quitDriver();
     }
 }
-

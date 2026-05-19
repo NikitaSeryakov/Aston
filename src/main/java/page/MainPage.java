@@ -1,48 +1,66 @@
 package page;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import utils.Waiter;
 
 import java.util.List;
 
-import static utils.DriverManager.driver;
-
 public class MainPage {
-    @FindBy(xpath = "//*[text() = 'Принять']")
-    private List<WebElement> cookieButton;
-    @FindBy(xpath = "//input[@placeholder = 'Номер телефона']")
-    private WebElement telethonNumber;
-    @FindBy(xpath = "//input[@placeholder = 'Сумма']")
-    private WebElement depositSum;
-    @FindBy(xpath = "//button[text() = 'Продолжить']")
-    private WebElement buttonContinue;
+    private WebDriver driver;
 
-    public MainPage openPage(String url) {
-        driver.get(url);
-        return this;
+    public MainPage(WebDriver driver) {
+        this.driver = driver;
     }
 
-    public MainPage acceptCookie() {
-        if (!cookieButton.isEmpty()) {
-        cookieButton.get(0).click();
-            Waiter.waitElementToBeInvisible(cookieButton.get(0));
-        }
-        return this;
+
+    public boolean isBlockTitleDisplayed() {
+        WebElement blockTitle = driver.findElement(By.xpath("//*[contains(text() , 'Онлайн пополнение')]"));
+        return blockTitle.isDisplayed();
     }
 
-    public MainPage addNumber(String telethon) {
-        telethonNumber.sendKeys(telethon);
-        return this;
+
+    public boolean arePaymentLogosDisplayed() {
+        List<WebElement> logos = driver.findElements(By.cssSelector(".pay-partners img, .payment-systems img"));
+        return logos.size() > 0;
     }
 
-    public MainPage addSum(String sum) {
-        depositSum.sendKeys(sum);
-        return this;
+
+    public void clickServiceLink() {
+        WebElement serviceLink = driver.findElement(By.linkText("Подробнее о сервисе"));
+        serviceLink.click();
     }
 
-    public MainPage clickButtonContinue() {
-        buttonContinue.click();
-        return this;
+    public void goBack() {
+        driver.navigate().back();
+    }
+
+    public void fillFormAndContinue(String serviceType, String phoneNumber) {
+        driver.findElement(By.xpath("//input[@placeholder = 'Номер телефона']")).sendKeys(serviceType);
+        driver.findElement(By.xpath("//input[@placeholder = 'Сумма']"));
+        driver.findElement(By.xpath("//*[button = 'Продолжить']")).click();
+    }
+
+    public boolean isOnDetailPage() {
+        return driver.getPageSource().contains("Проверка номера");
+    }
+
+
+    public String getPlaceholderText(String fieldID) {
+        WebElement field = driver.findElement(By.xpath("//input[@class='total_rub' and @placeholder='Сумма']"));
+        return field.getAttribute("placeholder"); // Получаем текст подсказки
+    }
+
+
+    public boolean isPaymentIconsDisplayed() {
+        List<WebElement> icons = driver.findElements(By.xpath("//div[contains(@class, 'icons-container')]"));
+        return icons.size() > 0;
+    }
+
+
+    public boolean verifyAmountsAndPhoneNumber(String expectedAmount, String expectedPhoneNumber) {
+        String actualAmount = driver.findElement(By.xpath("//input[@id='connection-sum']")).getText();
+        String actualPhoneNumber = driver.findElement(By.xpath("//input[@id='connection-phone']")).getText();
+        return actualAmount.equals(expectedAmount) && actualPhoneNumber.equals(expectedPhoneNumber);
     }
 }
